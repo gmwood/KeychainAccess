@@ -1189,20 +1189,9 @@ extension Options {
             attributes[AttributeComment] = comment
         }
 
-        if let policy = authenticationPolicy {
-            if #available(OSX 10.10, *) {
-                var error: Unmanaged<CFError>?
-                guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault, accessibility.rawValue, SecAccessControlCreateFlags(rawValue: policy.rawValue), &error) else {
-                    if let error = error?.takeUnretainedValue() {
-                        return (attributes, error.error)
-                    }
-                    let message = Status.UnexpectedError.description
-                    return (attributes, NSError(domain: KeychainAccessErrorDomain, code: Int(Status.UnexpectedError.rawValue), userInfo: [NSLocalizedDescriptionKey: message]))
-                }
-                attributes[AttributeAccessControl] = accessControl
-            } else {
-                print("Unavailable 'Touch ID integration' on OS X versions prior to 10.10.")
-            }
+        if let _ = authenticationPolicy {
+            print("Unavailable 'Touch ID integration' on OS X versions prior to 10.10.")
+
         } else {
             attributes[AttributeAccessible] = accessibility.rawValue
         }
